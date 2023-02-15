@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Profile</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/darkly/bootstrap.min.css">
+    </head>
+    <body>
+        <h1>Profile</h1>
+        <form action="{{ url_for('update_profile') }} " method="POST">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" name="name" required> <!--value="{{ username }}" -->
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="text" name="email" required> <!--value="{{ email }}"-->
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" name="password" required>
+            </div>
+            <div>
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" name="confirm_password" required>
+            </div>
+            <div>
+                <input type="submit" value="Save Changes">
+            </div>
+        </form>
+    </body>
+</html>

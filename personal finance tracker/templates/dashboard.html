@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/darkly/bootstrap.min.css">
+    <style>
+      /* Add custom CSS here */
+      body {
+        background-color: #2d2d2d;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: #9b59b6;
+      }
+      .btn-primary {
+        background-color: #9b59b6;
+        border-color: #8e44ad;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>-->
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Financial Management</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="#income" class="income-tab">Income</a></li>
+                <li><a href="#expenses" class="expenses-tab">Expenses</a></li>
+                <li><a href="#savings" class="savings-tab">Savings</a></li>
+                <li><a href="#reports" class="reports-tab">Reports</a></li>
+                <li><a href="#reminders" class="reminders-tab">Reminders</a></li>
+                <li><a href="#budget" class="budget-tab">Budget</a></li>
+            </ul>
+        </nav>
+        <div class="jumbotron text-center">
+            <h1>Welcome to your dashboard, {{ username }}</h1>
+            <p>You are now logged in and can start managing your finances</p>
+        </div>
+
+        <div class="income-section" style="display: none;">
+            <h2>Income</h2>
+            <form action="{{ url_for('add_income') }}" method="post">
+                <div class="form-group">
+                    <label for="source">Source of Income:</label>
+                    <input type="text" class="form-control" id="source" name="source">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="text" class="form-control" id="amount" name="amount">
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" class="form-control" id="date" name="date">
+                </div>
+                <input type="submit" value="Add Income" class="btn btn-primary">
+            </form>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                    <tr>
+                        <td>{{ income.source }}</td>
+                        <td>$ {{ "{:,.2f}".format(income.amount) }}</td>
+                        <td>{{ income.date }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_income', id=income.id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url_for('delete_income', id=income.id) }}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+
+        <div class="expense-section" style="display: none;">
+            <h2>Expenses</h2>
+            <form action="{{ url_for('add_expense') }}" method="post">
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <input type="text" class="form-control" id="category" name="category">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="text" class="form-control" id="amount" name="amount">
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" class="form-control" id="date" name="date">
+                </div>
+                <input type="submit" value="Add Expense" class="btn btn-primary">
+            </form>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.category }}</td>
+                        <td>$ {{ "{:,.2f}".format(expense.amount) }}</td>
+                        <td>{{ expense.date }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_expense', id=expense.id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url_for('delete_expense', id=expense.id) }}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+
+        <div class="savings-section" style="display: none;">
+            <h2>Savings</h2>
+            <form action="{{ url_for('add_savings') }}" method="post">
+                <div class="form-group">
+                    <label for="goal">Goal:</label>
+                    <input type="text" class="form-control" id="goal" name="goal">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="text" class="form-control" id="amount" name="amount">
+                </div>
+                <div class="form-group">
+                    <label for="deadline">Deadline:</label>
+                    <input type="date" class="form-control" id="deadline" name="deadline">
+                </div>
+                <input type="submit" value="Add Savings" class="btn btn-primary">
+            </form>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Goal</th>
+                        <th>Amount</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for savings in savings %}
+                    <tr>
+                        <td>{{ savings.goal }}</td>
+                        <td>$ {{ "{:,.2f}".format(savings.amount) }}</td>
+                        <td>{{ savings.deadline }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_savings', id=savings.id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url_for('delete_savings', id=savings.id) }}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+
+        <div class="reports-section" style="display: none;">
+            <h2>Reports</h2>
+            <form action="{{ url_for('show_reports') }}" method="post">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date">
+                <input type="submit" value="Generate Reports">
+              </form>
+              <table class="table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                    <tr>
+                        <td>Income</td>
+                        <td>{{ income.source }}</td>
+                        <td>{{ income.amount }}</td>
+                        <td>{{ income.date }}</td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>Expense</td>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.amount }}</td>
+                        <td>{{ expense.date }}</td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for saving in savings %}
+                    <tr>
+                        <td>Saving</td>
+                        <td>{{ saving.goal }}</td>
+                        <td>{{ saving.amount }}</td>
+                        <td>{{ saving.deadline }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Income Total</th>
+                        <th>Expenses Total</th>
+                        <th>Savings Total</th>
+                        <th>Total Earnings</th>
+                        <th>Earnings with savings taken out</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ incomeTotal }}</td>
+                        <td>{{ expensesTotal }}</td>
+                        <td>{{ savingsTotal }}</td>
+                        <td>{{ totalEarnings }}</td>
+                        <td>{{ earningsNoSavings }}</td>
+                    </tr>
+                </tbody>
+            </table> 
+            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+            <script>
+
+                var xValues = ["Income", "Expenses", "Savings", ];
+                if (typeof {{ incomeTotal }} !== 'undefined') {
+                    var yVal = [{{ incomeTotal }}, {{ expensesTotal }}, {{ savingsTotal }}];
+                }
+                else{
+                    var yVal = [0]
+                }
+                console.log({{ incomeTotal }})
+                console.log(yVal)
+
+                var yValues = yVal.sort();
+                var barColors = ["#9b59b6", "#20c997","#6c757d"];
+
+                var maxValue = yValues[0];
+                var minValue = 0 - maxValue;
+
+                new Chart("myChart", {
+                type: "bar",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                    backgroundColor: barColors,
+                    data: yValues
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false,            
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                            min: minValue,
+                            max: maxValue
+                            }
+                        }]
+                        }
+                }
+                });
+            </script>
+              <div id="reports-container">
+                
+              </div>
+        
+        </div>
+
+        <div class="reminders-section" style="display: none;">
+            <h2>Reminders</h2>
+            <form action="{{ url_for('add_reminder') }}" method="post">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="due_date">Due Date:</label>
+                    <input type="date" class="form-control" id="due_date" name="due_date">
+                </div>
+                <input type="submit" value="Add Reminder" class="btn btn-primary">
+            </form>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reminder in reminders %}
+                    <tr>
+                        <td>{{ reminder.name }}</td>
+                        <td>{{ reminder.description }}</td>
+                        <td>{{ reminder.due_date }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_reminder', id=reminder.id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url_for('delete_reminder', id=reminder.id) }}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+
+        <div class="budget-section" style="display: none;">
+            <h2>Budget</h2>
+            <form action="{{ url_for('show_reports') }}" method="post"></form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Goal</th>
+                        <th>Amount</th>
+                        <th>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for saving in savings %}
+                    <tr>
+                        <td>{{ saving.goal }}</td>
+                        <td>{{ saving.amount }}</td>
+                        <td>{{ saving.deadline }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>  
+            
+        </div>
+        <div class="text-right">
+            <a href="{{ url_for('profile') }}" class="btn btn-primary">Profile</a>
+        </div>
+        <div class="text-right">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $(".income-tab").click(function() {
+                $(".income-section").show();
+                $(".expense-section").hide();
+                $('.savings-section').hide();
+                $('.reminders-section').hide();
+                $('.reports-section').hide();
+                $('.budget-section').hide();
+            });
+            $(".expenses-tab").click(function() {
+                $(".expense-section").show();
+                $(".income-section").hide();
+                $('.savings-section').hide();
+                $('.reminders-section').hide();
+                $('.reports-section').hide();
+                $('.budget-section').hide();
+            });
+            $(".savings-tab").click(function() {
+                $(".expense-section").hide();
+                $(".income-section").hide();
+                $('.savings-section').show();
+                $('.reminders-section').hide();
+                $('.reports-section').hide();
+                $('.budget-section').hide();
+            });
+            $(".reminders-tab").click(function() {
+                $(".expense-section").hide();
+                $(".income-section").hide();
+                $('.savings-section').hide();
+                $('.reminders-section').show();
+                $('.reports-section').hide();
+                $('.budget-section').hide();
+            });
+            $(".reports-tab").click(function() {
+                $(".expense-section").hide();
+                $(".income-section").hide();
+                $('.savings-section').hide();
+                $('.reminders-section').hide();
+                $('.reports-section').show();
+                $('.budget-section').hide();
+            });
+            $(".budget-tab").click(function() {
+                $(".expense-section").hide();
+                $(".income-section").hide();
+                $('.savings-section').hide();
+                $('.reminders-section').hide();
+                $('.reports-section').hide();
+                $('.budget-section').show();
+            });
+        });
+    </script>
+    
+</body>
+</html>
